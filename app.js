@@ -30,26 +30,3 @@ app.get('/smoothies', (req, res) => res.render('smoothies'));
 
 app.use(authRoutes);
 
-// cookies
-app.get('/set-cookies', (req, res) => {
-  // cookie store up to browser not close / by default maxAge = session
-  // res.setHeader('Set-Cookie', 'newUser=true');
-
-  res.cookie('newUser', false);
-  // secure true for only https
-  // httpOnly true for access only http not from js document.cookie 
-  res.cookie('isEmployee', true,
-    {
-      maxAge: 1000 * 60 * 60 * 24,
-      secure: true,
-      httpOnly: true
-    });
-
-  res.send('got the cookies');
-})
-
-app.get('/read-cookies', (req, res) => {
-  const cookies = req.cookies;
-  console.log(cookies.newUser);
-  res.send(cookies);
-})
