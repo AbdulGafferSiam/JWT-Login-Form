@@ -36,6 +36,19 @@ userSchema.pre('save', async function (next) {
     next();
 })
 
+// static method to login user
+userSchema.statics.login = async function(email, password) {
+    const user = await this.findOne({ email: email });
+    if (user) {
+        const auth = await bcrypt.compare(password, user.password);
+        if (auth) {
+            return user;
+        }
+        throw Error('Incorrect Password');
+    }
+    throw Error('Incorrect Email');
+}
+
 // here the model 'user' need to be singular format
 // mongoose make it plural and save data on to the collection 'users'
 const User = mongoose.model('user', userSchema);

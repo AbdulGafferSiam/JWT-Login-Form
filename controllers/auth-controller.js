@@ -61,15 +61,24 @@ module.exports.signup_post = async (req, res) => {
 
         // 201 - success to create the resouce
         // send back the user as json
+        // send json to front end
         res.status(201).json({ user: user._id });
     } catch (err) {
         const errors = handleErrors(err);
+        // send json to front end
         res.status(400).json({ errors });
     }
 }
 
 module.exports.login_post = async (req, res) => {
     const { email, password } = req.body;
-    console.log(email + '\n' + password);
-    res.send('login');
+    
+    try {
+        const user = await User.login(email, password);
+        // send json to front end
+        res.status(200).json({ user: user._id });
+    } catch (err) {
+        // send json to front end
+        res.status(400).json({});
+    }
 }
