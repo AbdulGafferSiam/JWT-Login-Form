@@ -99,3 +99,11 @@ module.exports.login_post = async (req, res) => {
         res.status(400).json({ errors });
     }
 }
+
+module.exports.logout_get = (req, res) => {
+    // we can not delete the cookie directly
+    // so we set the value '' and max-age as 1ms
+    // after 1ms, the cookie will be destroyed 
+    res.cookie('jwt', '', { maxAge: 1 });
+    res.redirect('/');
+}
