@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 const requireAuth = (req, res, next) => {
     // grab jwt token from cookie
@@ -8,7 +9,7 @@ const requireAuth = (req, res, next) => {
     if (token) {
         jwt.verify(token, 'anySecret', (err, decodedToken) => {
             if (err) {
-                console.log(err);
+                console.log(err.message);
                 res.redirect('/login');
             } else {
                 console.log(decodedToken);
@@ -21,4 +22,27 @@ const requireAuth = (req, res, next) => {
     }
 }
 
-module.exports = { requireAuth };
+// check current user
+const checkUser = (req, res, next) => {
+    const token = req.cookies.jwt;
+    if (token) {
+        jwt.verify(token, 'anySecret', async (err, decodedToken) => {
+            if (err) {
+                console.log(err.message);
+                res.locals.user = null;
+                next();
+            } else {
+                console.log(decodedToken);
+                let user = await User.findById(decodedToken.id);
+                // to access the data in views
+                res.locals.user = user;
+                next();
+            }
+        });
+    } else {
+        res.locals.user = null;
+        next();
+    }
+}
+
+module.exports = { requireAuth, checkUser };
